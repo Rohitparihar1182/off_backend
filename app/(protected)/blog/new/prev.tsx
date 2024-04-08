@@ -1,6 +1,5 @@
 "use client";
 
-import { addBlog } from "@/actions/add-blog";
 import Editor from "@/components/editor/editor";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
@@ -22,41 +21,38 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { BlogSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+const categories = [
+	{ id: "abc1", name: "category1" },
+	{ id: "abc2", name: "category2" },
+	{ id: "abc3", name: "category3" },
+];
 
 export default function NewBlogPage() {
 	const [error, setError] = useState<string | undefined>();
 	const [success, setSuccess] = useState<string | undefined>();
+	const [isPending, startTransition] = useTransition();
 
 	const form = useForm<z.infer<typeof BlogSchema>>({
 		resolver: zodResolver(BlogSchema),
 		defaultValues: {
 			title: "",
+			content: "",
+			featuredImage: "",
+			slug: "",
+			categories: "",
 		},
 	});
 
-	const onSubmit = async (data: z.infer<typeof BlogSchema>) => {
-		const { error, success } = await addBlog(data);
-		if (error) {
-			setError(error);
-		} else {
-			setSuccess(success);
-		}
+	const onSubmit = (values: z.infer<typeof BlogSchema>) => {
+		console.log(values);
 	};
-
-	const title = form.watch("title");
-
-	const getSlug = (title: string): string => {
-		return title.replaceAll(" ", "-");
-	};
-
-	useEffect(() => {
-		form.setValue("slug", getSlug(title));
-	}, [title]);
 
 	return (
 		<main className="mt-4 p-4">
@@ -67,7 +63,10 @@ export default function NewBlogPage() {
 			</div>
 			<div>
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)}>
+					<form
+						className="space-y-6"
+						onSubmit={() => form.handleSubmit(onSubmit)}
+					>
 						<div className="grid grid-cols-12 gap-8 justify-between">
 							<div className="col-span-3 p-3">
 								{/* featured Image */}
@@ -84,10 +83,7 @@ export default function NewBlogPage() {
 															? [field.value]
 															: []
 													}
-													disabled={
-														form.formState
-															.isSubmitting
-													}
+													disabled={isPending}
 													onChange={(url) =>
 														field.onChange(url)
 													}
@@ -113,10 +109,7 @@ export default function NewBlogPage() {
 												<Input
 													{...field}
 													placeholder="John Doe"
-													disabled={
-														form.formState
-															.isSubmitting
-													}
+													disabled={isPending}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -131,9 +124,7 @@ export default function NewBlogPage() {
 										<FormItem>
 											<FormLabel>Categories</FormLabel>
 											<Select
-												disabled={
-													form.formState.isSubmitting
-												}
+												disabled={isPending}
 												onValueChange={field.onChange}
 											>
 												<FormControl>
@@ -170,12 +161,9 @@ export default function NewBlogPage() {
 										<FormItem>
 											<FormLabel>Content</FormLabel>
 											<FormControl>
-												<Editor
-													onChange={(content) =>
+												<Editor onChange={(content) =>
 														field.onChange(content)
-													}
-													value={field.value}
-												/>
+													} value={field.value} />
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -192,31 +180,23 @@ export default function NewBlogPage() {
 												<Input
 													{...field}
 													placeholder="John Doe"
-													disabled={
-														form.formState
-															.isSubmitting
-													}
+													disabled={isPending}
 												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
-								<FormError message={error} />
-								<FormSuccess message={success} />
-								<Button disabled={form.formState.isSubmitting}>
-									Save
-								</Button>
 							</div>
 						</div>
+						<FormError message={error} />
+						<FormSuccess message={success} />
+						<Button disabled={isPending}>
+							Save
+						</Button>
 					</form>
 				</Form>
 			</div>
 		</main>
 	);
 }
-const categories = [
-	{ id: "clur6ysbu0002v53kox2qfkbj", name: "category1" },
-	{ id: "clur6ysbu0002v53kox2qfkbj", name: "category2" },
-	{ id: "clur6ysbu0002v53kox2qfkbj", name: "category3" },
-];

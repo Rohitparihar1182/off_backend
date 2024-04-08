@@ -51,24 +51,31 @@ export const RegisterSchema = z.object({
   }),
 });
 
-const CategorySchema = z.object({
-  name: z.string()
-})
 
+// todo: Change blog schema
 export const BlogSchema = z.object({
-  title: z.string().min(10, {
+  title: z.string().min(5, {
     message: "Title should be at least 10 characters long"
   }),
-  content: z.string().min(200, {
+  content: z.string().min(3, {
     message: "Content is too short"
   }),
   featuredImage: z.string().min(1, {
     message: "Featured image is required"
   }), 
-  slug: z.string().min(10, {
+  slug: z.string().min(5, {
     message: "Slug is too short"
   }),
-  categories: z.array(CategorySchema).min(1, {
-    message: "Atleast one category is required"
+  categories: z.string().min(1, {
+    message: "Category is required"
   })
 });
+
+export const CategorySchema = z.object({
+  name: z.string().min(2, {
+    message: "Category name is required"
+  }),
+  image: z.string().min(1, {
+    message: "Category image is required"
+  })
+})

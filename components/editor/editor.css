@@ -1,0 +1,28 @@
+.md-editor .md-editor-toolbar-warp.md-editor-toolbar-warp{
+    padding: 5px;
+}
+
+.md-editor .md-editor-toolbar{
+    gap: 12px;
+}
+
+.md-editor-toolbar.md-editor-toolbar > button{
+    width: 32px;
+    height: 32px;
+    outline: 1px solid #11111140;
+}
+
+.md-editor-toolbar > button > svg{
+    width: 16px;
+    height: 16px;
+}
+
+.md-editor-content .cm-content{
+    min-height: 400px;
+    font-size: 1rem;
+    padding: 10px;
+}
+
+.md-editor-content .cm-gutters{
+    display: none;
+}

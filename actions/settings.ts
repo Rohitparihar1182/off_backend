@@ -30,7 +30,6 @@ export const settings = async (
     values.email = undefined;
     values.password = undefined;
     values.newPassword = undefined;
-    values.isTwoFactorEnabled = undefined;
   }
 
   if (values.email && values.email !== user.email) {

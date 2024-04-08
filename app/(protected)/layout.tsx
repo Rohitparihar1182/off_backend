@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/toaster";
+import SidebarWrapper from "@/components/sidebar-wrapper";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -17,21 +19,15 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={poppins.className}>
-				<div className="flex bg-slate-100 dark:bg-slate-900 h-screen">
-					<div
-						id="sidebar"
-						className="sidebar h-screen right-0 transition duration-300 w-[260px] outline bg-purple-500 text-white p-6"
-					>
-						This is sidebar
-					</div>
-					<div
-						id="main-content"
-						className="main-content transition flex-1  overflow-y-auto"
-					>
-						<Navbar />
-						{children}
-					</div>
-				</div>
+				<SidebarWrapper
+					childrens={
+						<>
+							<Toaster />
+							<Navbar />
+							{children}
+						</>
+					}
+				/>
 			</body>
 		</html>
 	);
