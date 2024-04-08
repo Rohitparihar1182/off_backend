@@ -1,5 +1,6 @@
 "use client";
 
+import { addBlog } from "@/actions/add-blog";
 import Editor from "@/components/editor/editor";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
@@ -21,41 +22,45 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { BlogSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { Category } from "@prisma/client";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const categories = [
-	{ id: "abc1", name: "category1" },
-	{ id: "abc2", name: "category2" },
-	{ id: "abc3", name: "category3" },
-];
-
-export default function NewBlogPage() {
+export default function BlogForm({categories} : {categories: Category[]}) {
 	const [error, setError] = useState<string | undefined>();
 	const [success, setSuccess] = useState<string | undefined>();
-	const [isPending, startTransition] = useTransition();
 
 	const form = useForm<z.infer<typeof BlogSchema>>({
 		resolver: zodResolver(BlogSchema),
 		defaultValues: {
 			title: "",
-			content: "",
-			featuredImage: "",
-			slug: "",
-			categories: "",
 		},
 	});
 
-	const onSubmit = (values: z.infer<typeof BlogSchema>) => {
-		console.log(values);
+	const onSubmit = async (data: z.infer<typeof BlogSchema>) => {
+		const { error, success } = await addBlog(data);
+		if (error) {
+			setError(error);
+		} else {
+			setSuccess(success);
+		}
 	};
 
+	const title = form.watch("title");
+
+	const getSlug = (title: string): string => {
+		return title.replaceAll(" ", "-");
+	};
+
+	useEffect(() => {
+		form.setValue("slug", getSlug(title));
+	}, [title]);
+
 	return (
-		<main className="mt-4 p-4">
+		<main className="mt-4 mb-5 p-4">
 			<div>
 				<h4 className="font-semibold text-3xl dark:text-white">
 					Add Blog
@@ -63,10 +68,7 @@ export default function NewBlogPage() {
 			</div>
 			<div>
 				<Form {...form}>
-					<form
-						className="space-y-6"
-						onSubmit={() => form.handleSubmit(onSubmit)}
-					>
+					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className="grid grid-cols-12 gap-8 justify-between">
 							<div className="col-span-3 p-3">
 								{/* featured Image */}
@@ -83,7 +85,10 @@ export default function NewBlogPage() {
 															? [field.value]
 															: []
 													}
-													disabled={isPending}
+													disabled={
+														form.formState
+															.isSubmitting
+													}
 													onChange={(url) =>
 														field.onChange(url)
 													}
@@ -109,7 +114,10 @@ export default function NewBlogPage() {
 												<Input
 													{...field}
 													placeholder="John Doe"
-													disabled={isPending}
+													disabled={
+														form.formState
+															.isSubmitting
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -124,7 +132,9 @@ export default function NewBlogPage() {
 										<FormItem>
 											<FormLabel>Categories</FormLabel>
 											<Select
-												disabled={isPending}
+												disabled={
+													form.formState.isSubmitting
+												}
 												onValueChange={field.onChange}
 											>
 												<FormControl>
@@ -161,9 +171,12 @@ export default function NewBlogPage() {
 										<FormItem>
 											<FormLabel>Content</FormLabel>
 											<FormControl>
-												<Editor onChange={(content) =>
+												<Editor
+													onChange={(content) =>
 														field.onChange(content)
-													} value={field.value} />
+													}
+													value={field.value}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -180,20 +193,23 @@ export default function NewBlogPage() {
 												<Input
 													{...field}
 													placeholder="John Doe"
-													disabled={isPending}
+													disabled={
+														form.formState
+															.isSubmitting
+													}
 												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
+								<FormError message={error} />
+								<FormSuccess message={success} />
+								<Button disabled={form.formState.isSubmitting}>
+									Upload
+								</Button>
 							</div>
 						</div>
-						<FormError message={error} />
-						<FormSuccess message={success} />
-						<Button disabled={isPending}>
-							Save
-						</Button>
 					</form>
 				</Form>
 			</div>

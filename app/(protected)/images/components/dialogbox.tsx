@@ -40,11 +40,9 @@ export function DialogBox({ url, alt }: { url: string; alt: string }) {
 						alt={alt}
 						width={100}
 						height={100}
+						quality={100}
 					/>
 				</div>
-				{/* <Button variant="outline">
-					
-				</Button> */}
 			</DialogTrigger>
 
 			<DialogContent className="sm:max-w-md">
@@ -58,7 +56,7 @@ export function DialogBox({ url, alt }: { url: string; alt: string }) {
 						</Label>
 						<Input
 							id="link"
-							defaultValue="https://ui.shadcn.com/docs/installation"
+							defaultValue={url}
 							readOnly
 						/>
 					</div>

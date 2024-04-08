@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DialogBox } from "./components/dialogbox";
+import { db } from "@/lib/db";
 
-export default function UploadImagePage(){
+export default async function UploadImagePage(){
+    const images = await db.image.findMany()
+
     return (
         <main className="p-4">
 			<div className="mt-4 flex justify-between items-center">
@@ -17,66 +20,11 @@ export default function UploadImagePage(){
 			</div>
             <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                 {
-                    images.map((img, idx) => (
-                        <DialogBox url={img.href} alt={img.alt} key={idx} />
+                    images.map(img => (
+                        <DialogBox url={img.url} alt={img.alt} key={img.id} />
                     ))
                 }
             </div>
 		</main>
     )
 }
-
-const images = [
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-    {
-        href: "/1.jpg",
-        alt: "This is an image",
-    },
-]
