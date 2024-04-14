@@ -3,19 +3,9 @@
 
 import { signOut } from "next-auth/react";
 import { Button } from "./ui/button";
-import { FormEvent, useEffect } from "react";
+import { FormEvent } from "react";
 
-const Navbar = () => {
-	const handleClick = () => {
-		const sidebar = document.querySelector("#sidebar");
-		if (sidebar) {
-			if (sidebar.classList.contains("hidden")) {
-				sidebar.classList.remove("hidden");
-			} else {
-				sidebar.classList.add("hidden");
-			}
-		}
-	};
+const Navbar = ({ handleOpen } : {handleOpen: () => void}) => {
 
 	const handleSubmit = async(e:FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -30,7 +20,7 @@ const Navbar = () => {
 			<div className="mx-0 flex justify-between max-w-full flex-wrap items-center py-2 px-4 lg:mx-auto relative">
 				<div>
 					<button
-						onClick={handleClick}
+						onClick={handleOpen}
 						className="group button-menu-mobile flex flex-col justify-around md:me-0 relative p-2 w-10 aspect-square"
 					>
 						<span className="line block w-6 h-[3px] bg-black transition-all duration-200 group-hover:w-3"></span>

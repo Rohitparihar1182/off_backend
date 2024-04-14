@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import SidebarWrapper from "@/components/sidebar-wrapper";
 
@@ -23,7 +22,6 @@ export default function RootLayout({
 					childrens={
 						<>
 							<Toaster />
-							<Navbar />
 							{children}
 						</>
 					}

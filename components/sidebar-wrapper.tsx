@@ -1,21 +1,40 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState } from "react";
+import Sidebar from "@/components/sidebar";
+import Navbar from "./navbar";
+import { motion } from 'framer-motion';
 
 export default function SidebarWrapper({
 	childrens,
 }: {
 	childrens: React.ReactNode;
 }) {
+	const [isOpen, setIsOpen] = useState(true);
+
+	const handleOpen = () => {
+		if(isOpen){
+			setIsOpen(false);
+		}else{
+			setIsOpen(true)
+		}
+	}
+
 	return (
 		<div className="flex bg-slate-100 dark:bg-slate-900 h-screen">
-			<div
+			<motion.div
 				id="sidebar"
-				className="sidebar h-screen right-0 transition duration-300 w-[260px] outline bg-purple-500 text-white p-6"
+				aria-expanded={"true"}
+				animate={{
+					x: isOpen ? 0 : "-100%",
+					transition: { ease: "linear", duration: 0.2, type: "keyframes", delay: isOpen ? 0.2 : 0 }
+					
+				  }}
+				className="sidebar fixed h-screen transition-all ease-linear w-[260px] outline bg-gradient-to-t from-[#6f3dc3] from-10% via-[#603dc3] via-40% to-[#5c3dc3] to-100% dark:bg-[#603dc3] text-white "
 			>
-				This is sidebar
-			</div>
-			<div
+				<Sidebar />
+			</motion.div>
+			<motion.div
 				onScroll={(e) => {
 					if (e.currentTarget.scrollTop > 20) {
 						document.getElementById('topbar')?.classList.add("backdrop-blur-md")
@@ -23,11 +42,17 @@ export default function SidebarWrapper({
 						document.getElementById('topbar')?.classList.remove("backdrop-blur-md")
 					}
 				}}
+				animate={{
+					marginLeft: isOpen ? '260px' : '0px',
+					transition: { ease: "linear", duration: 0.2, type: "keyframes" }
+				  }}
 				id="main-content"
-				className="main-content transition flex-1  overflow-y-auto"
+				className="main-content flex-1 overflow-y-auto transition-all ml-[260px] ease-linear"
 			>
+				
+				<Navbar handleOpen={handleOpen} />
 				{childrens}
-			</div>
+			</motion.div>
 		</div>
 	);
 }
